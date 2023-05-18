@@ -20,14 +20,14 @@ namespace PokedexApi.Controllers
             _pokemonRepository = pokemonRepository;
         }
 
-        [HttpGet]
+        [HttpGet("Pokemons")]
         public async Task<IActionResult> GetAllPokemon()
         {
             var result = await _pokemonRepository.GetAllPokemon();
             return Ok(result);
         }
 
-        [HttpGet("id/{id}")]
+        [HttpGet("GetPokemon/{id}")]
         public IActionResult GetPokemonById(int id)
         {
             var result = _pokemonRepository.GetPokemonById(id);
@@ -41,7 +41,7 @@ namespace PokedexApi.Controllers
             return Ok(result);
         }
 
-        [HttpGet("pokemonNo/{pokemonNo}")]
+        [HttpGet("PokemonNo/{pokemonNo}")]
         public IActionResult GetPokemonByPokemonNo(string pokemonNo)
         {
             var result = _pokemonRepository.GetPokemonByPokemonNo(pokemonNo);
@@ -55,7 +55,7 @@ namespace PokedexApi.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("AddPokemon")]
         public async Task<IActionResult> AddPokemon(PokemonDto pokemonDto)
         {
             await _pokemonRepository.AddPokemon(pokemonDto);
@@ -64,7 +64,7 @@ namespace PokedexApi.Controllers
             return Ok(success);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("UpdatePokemon/{id}")]
         public async Task<IActionResult> UpdatePokemon(int id, PokemonDto pokemonDto)
         {
             await _pokemonRepository.UpdatePokemon(id, pokemonDto);
@@ -73,7 +73,7 @@ namespace PokedexApi.Controllers
             return Ok(success);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeletePokemon/{id}")]
         public async Task<IActionResult> DeletePokemon(int id)
         {
             await _pokemonRepository.DeletePokemon(id);

@@ -4,6 +4,7 @@ using PokedexApi.CustomMiddleware;
 using PokedexApi.Data;
 using PokedexApi.Mapper;
 using PokedexApi.Repositories;
+using PokedexApi.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
 builder.Services.AddScoped<PokemonRepository>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
