@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using ContactAPI.DTO;
-using ContactAPI.Models;
-using ContactAPI.Repository;
+using PokedexApi.DTO;
+using PokedexApi.Models;
+using PokedexApi.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,18 +10,18 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace ContactAPI.Controllers
+namespace PokedexApi.Controllers
 {
     [ApiController]
     public class AccountController : ControllerBase
     {
         public IConfiguration _appConfig { get; }
         public IMapper _mapper { get; }
-        IAccountDBRepository _repo;
+        IAccountRepository _repo;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AccountController(IAccountDBRepository accRepo,
+        public AccountController(IAccountRepository accRepo,
                                  IMapper mapper,
                                  IConfiguration appConfig,
                                  UserManager<ApplicationUser> userManager,
