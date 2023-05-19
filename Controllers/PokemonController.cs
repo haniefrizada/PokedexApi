@@ -6,11 +6,13 @@ using PokedexApi.Data;
 using Microsoft.EntityFrameworkCore;
 using PokedexApi.DTO;
 using PokedexApi.Repositories;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PokedexApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class PokemonController : ControllerBase
     {
         private readonly PokemonRepository _pokemonRepository;
@@ -20,14 +22,14 @@ namespace PokedexApi.Controllers
             _pokemonRepository = pokemonRepository;
         }
 
-        [HttpGet("Pokemons")]
+        [HttpGet]
         public async Task<IActionResult> GetAllPokemon()
         {
             var result = await _pokemonRepository.GetAllPokemon();
             return Ok(result);
         }
 
-        [HttpGet("GetPokemon/{id}")]
+        [HttpGet("{id}")]
         public IActionResult GetPokemonById(int id)
         {
             var result = _pokemonRepository.GetPokemonById(id);
@@ -41,39 +43,25 @@ namespace PokedexApi.Controllers
             return Ok(result);
         }
 
-        [HttpGet("PokemonNo/{pokemonNo}")]
-        public IActionResult GetPokemonByPokemonNo(string pokemonNo)
-        {
-            var result = _pokemonRepository.GetPokemonByPokemonNo(pokemonNo);
-
-            if (result == null)
-            {
-                var errormessage = $"Pokemon No {pokemonNo} not found.";
-                return NotFound(errormessage);
-            }
-
-            return Ok(result);
-        }
-
-        [HttpPost("AddPokemon")]
+        [HttpPost]
         public async Task<IActionResult> AddPokemon(PokemonDto pokemonDto)
         {
             await _pokemonRepository.AddPokemon(pokemonDto);
 
-            var success = $"Successfully added new Pokemon";
-            return Ok(success);
+            /*var success = $"Successfully added new Pokemon";*/
+            return Ok(pokemonDto);
         }
 
-        [HttpPut("UpdatePokemon/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePokemon(int id, PokemonDto pokemonDto)
         {
             await _pokemonRepository.UpdatePokemon(id, pokemonDto);
 
-            var success = $"Successfully updated PokemonId {id}";
-            return Ok(success);
+            /*var success = $"Successfully updated PokemonId {id}";*/
+            return Ok(pokemonDto);
         }
 
-        [HttpDelete("DeletePokemon/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePokemon(int id)
         {
             await _pokemonRepository.DeletePokemon(id);

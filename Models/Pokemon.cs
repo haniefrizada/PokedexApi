@@ -7,9 +7,17 @@ namespace PokedexApi.Models
         public int Id { get; set; }
 
         [StringLength(6, MinimumLength = 4)]
+
+        [Required(ErrorMessage = "This field is required")]
         public string PokemonNo { get; set; }
+
+        [Required(ErrorMessage = "This field is required")]
         public string Name { get; set; }
+
+        [Required(ErrorMessage = "This field is required")]
         public string Type { get; set; }
+
+        [Required(ErrorMessage = "This field is required")]
         public string Description { get; set; }
 
         public Pokemon()

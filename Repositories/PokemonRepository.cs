@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using PokedexApi.Data;
@@ -7,13 +8,15 @@ using PokedexApi.Models;
 
 namespace PokedexApi.Repositories
 {
-    public class PokemonRepository
+    public class PokemonRepository 
     {
         private readonly PokedexDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public PokemonRepository(PokedexDbContext context)
+        public PokemonRepository(PokedexDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<List<Pokemon>> GetAllPokemon()
@@ -25,15 +28,6 @@ namespace PokedexApi.Repositories
         {
             var result = _context.Pokemons.FromSqlRaw("EXEC GetPokemonById @PokemonId", new SqlParameter("@PokemonId", id))
                 .AsEnumerable()                         
-                .FirstOrDefault();
-
-            return result;
-        }
-
-        public Pokemon GetPokemonByPokemonNo(string pokemonNo)
-        {
-            var result = _context.Pokemons.FromSqlRaw("EXEC GetPokemonByPokemonNo @PokemonNo", new SqlParameter("@PokemonNo", pokemonNo))
-                .AsEnumerable()
                 .FirstOrDefault();
 
             return result;

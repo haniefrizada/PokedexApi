@@ -19,6 +19,20 @@ builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<PokedexDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequiredLength = 5;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireDigit = true;
+    options.Password.RequiredUniqueChars = 1;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+});
+
 builder.Services.AddScoped<PokemonRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
@@ -43,6 +57,18 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = audience,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
     };
+});
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy(
+        name: MyAllowSpecificOrigins, policy => {
+            policy.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+        }
+   );
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -105,10 +131,6 @@ builder.Services.AddDbContext<PokedexDbContext>(options =>
     options.UseSqlServer(builder.Configuration
     .GetConnectionString("DefaultConnectionString")));
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<PokedexDbContext>()
-    .AddDefaultTokenProviders();
-
 var app = builder.Build();
 
 
@@ -119,8 +141,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(MyAllowSpecificOrigins);
 app.UseMiddleware<ApiKeyAuthMiddleware>();
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllers();
 
