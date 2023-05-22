@@ -7,6 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using PokedexApi.DTO;
 using PokedexApi.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace PokedexApi.Controllers
 {
@@ -46,26 +50,62 @@ namespace PokedexApi.Controllers
         [HttpPost]
         public async Task<IActionResult> AddPokemon(PokemonDto pokemonDto)
         {
+            if (!ModelState.IsValid)
+            {
+                var errorDetails = new List<string>();
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    errorDetails.Add(error.ErrorMessage);
+                }
+                return BadRequest(new { message = "Validation errors occurred.", errors = errorDetails });
+            }
+
             await _pokemonRepository.AddPokemon(pokemonDto);
 
-            /*var success = $"Successfully added new Pokemon";*/
-            return Ok(pokemonDto);
+            var successMessage = "New Pokemon added successfully.";
+            return Ok(new { message = successMessage, pokemon = pokemonDto });
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePokemon(int id, PokemonDto pokemonDto)
         {
+            if (!ModelState.IsValid)
+            {
+                var errorDetails = new List<string>();
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    errorDetails.Add(error.ErrorMessage);
+                }
+                return BadRequest(new { message = "Validation errors occurred.", errors = errorDetails });
+            }
+
+            var existingPokemon = _pokemonRepository.GetPokemonById(id);
+            if (existingPokemon == null)
+            {
+                var errorMessage = $"Pokemon ID {id} not found.";
+                return NotFound(new { message = errorMessage });
+            }
+
             await _pokemonRepository.UpdatePokemon(id, pokemonDto);
 
-            /*var success = $"Successfully updated PokemonId {id}";*/
-            return Ok(pokemonDto);
+            var successMessage = $"Pokemon with ID {id} updated successfully.";
+            return Ok(new { message = successMessage, pokemon = pokemonDto });
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePokemon(int id)
         {
+            var existingPokemon = _pokemonRepository.GetPokemonById(id);
+            if (existingPokemon == null)
+            {
+                var errorMessage = $"Pokemon ID {id} not found.";
+                return NotFound(new { message = errorMessage });
+            }
+
             await _pokemonRepository.DeletePokemon(id);
-            return NoContent();
+
+            var successMessage = $"Pokemon with ID {id} deleted successfully.";
+            return Ok(new { message = successMessage });
         }
     }
 }

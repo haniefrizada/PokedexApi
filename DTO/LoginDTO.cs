@@ -4,10 +4,11 @@ namespace PokedexApi.DTO
 {
     public class LoginDTO
     {
-        [Required]
-        [EmailAddress]
+        [Required(ErrorMessage = "Username is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email address.")]
         public string UserName { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "Password is required.")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 

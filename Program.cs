@@ -64,7 +64,7 @@ builder.Services.AddCors(opt =>
 {
     opt.AddPolicy(
         name: MyAllowSpecificOrigins, policy => {
-            policy.AllowAnyOrigin()
+            policy.WithOrigins("https://localhost:44368", "https://localhost:7012")
             .AllowAnyHeader()
             .AllowAnyMethod();
         }
@@ -140,6 +140,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
 app.UseMiddleware<ApiKeyAuthMiddleware>();

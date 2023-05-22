@@ -4,6 +4,7 @@ using PokedexApi.Data;
 using PokedexApi.DTO;
 using PokedexApi.Models;
 using PokedexApi.Repositories;
+using System.Threading.Tasks;
 
 namespace PokedexApi.Repository
 {
@@ -13,8 +14,7 @@ namespace PokedexApi.Repository
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly PokedexDbContext _context;
 
-        public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager,
-            PokedexDbContext context)
+        public AccountRepository(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, PokedexDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -23,17 +23,26 @@ namespace PokedexApi.Repository
 
         public async Task<IdentityResult> SignUpUserAsync(ApplicationUser user, string password)
         {
-            return await _userManager.CreateAsync(user, password);
+            var result = await _userManager.CreateAsync(user, password);
+            return result;
         }
 
         public async Task<SignInResult> SignInUserAsync(LoginDTO loginDTO)
         {
-            return await _signInManager.PasswordSignInAsync(loginDTO.UserName, loginDTO.Password, false, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(loginDTO.UserName, loginDTO.Password, false, lockoutOnFailure: false);
+            return result;
         }
 
         public async Task<ApplicationUser> FindUserByEmailAsync(string email)
         {
-            return await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
+            return user;
+        }
+
+        public async Task<bool> IsEmailTakenAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            return user != null;
         }
     }
 }

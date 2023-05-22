@@ -7,17 +7,19 @@ namespace PokedexApi.Models
         public int Id { get; set; }
 
         [StringLength(6, MinimumLength = 4)]
-
-        [Required(ErrorMessage = "This field is required")]
+        [Required(ErrorMessage = "Pokemon number is required.")]
+        [RegularExpression("^#.*", ErrorMessage = "Pokemon number must start with '#' symbol.")]
         public string PokemonNo { get; set; }
 
-        [Required(ErrorMessage = "This field is required")]
+        [Required(ErrorMessage = "Name is required.")]
+        [RegularExpression("^[^0-9]+$", ErrorMessage = "Name cannot contain numbers.")]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "This field is required")]
+        [Required(ErrorMessage = "Type is required.")]
+        [RegularExpression("^[^0-9]+$", ErrorMessage = "Type cannot contain numbers.")]
         public string Type { get; set; }
 
-        [Required(ErrorMessage = "This field is required")]
+        [Required(ErrorMessage = "Description is required.")]
         public string Description { get; set; }
 
         public Pokemon()
