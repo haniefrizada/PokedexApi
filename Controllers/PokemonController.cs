@@ -47,6 +47,20 @@ namespace PokedexApi.Controllers
             return Ok(result);
         }
 
+        [HttpGet("pokemonNo/{pokemonNo}")]
+        public IActionResult GetPokemonByPokemonNo(string pokemonNo)
+        {
+            var result = _pokemonRepository.GetPokemonByPokemonNo(pokemonNo);
+
+            if (result == null)
+            {
+                var errormessage = $"Pokemon Number {pokemonNo} not found.";
+                return NotFound(errormessage);
+            }
+
+            return Ok(result);
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddPokemon(PokemonDto pokemonDto)
         {
@@ -60,11 +74,19 @@ namespace PokedexApi.Controllers
                 return BadRequest(new { message = "Validation errors occurred.", errors = errorDetails });
             }
 
+            var existingPokemon = _pokemonRepository.GetPokemonByPokemonNo(pokemonDto.PokemonNo);
+            if (existingPokemon != null)
+            {
+                var errorMessage = $"Pokemon number {pokemonDto.PokemonNo} already exists.";
+                return Conflict(new { message = errorMessage });
+            }
+
             await _pokemonRepository.AddPokemon(pokemonDto);
 
             var successMessage = "New Pokemon added successfully.";
             return Ok(new { message = successMessage, pokemon = pokemonDto });
         }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePokemon(int id, PokemonDto pokemonDto)

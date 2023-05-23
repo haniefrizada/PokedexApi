@@ -9,6 +9,7 @@ namespace PokedexApi.Repositories
     {
         Task<List<Pokemon>> GetAllPokemon();
         Pokemon GetPokemonById(int id);
+        Pokemon GetPokemonByPokemonNo(string pokemonNo);
         Task AddPokemon(PokemonDto pokemonDto);
         Task UpdatePokemon(int pokemonId, PokemonDto pokemonDto);
         Task DeletePokemon(int pokemonId);

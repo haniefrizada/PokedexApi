@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using PokedexApi.Data;
 using PokedexApi.DTO;
 using PokedexApi.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace PokedexApi.Repositories
 {
@@ -33,8 +34,23 @@ namespace PokedexApi.Repositories
             return result;
         }
 
+        public Pokemon GetPokemonByPokemonNo(string pokemonNo)
+        {
+            /*var result = _context.Pokemons.FirstOrDefault(p => p.PokemonNo == pokemonNo);*/
+            var result = _context.Pokemons.FromSqlRaw("EXEC GetPokemonByPokemonNo @PokemonNo", new SqlParameter("@PokemonNo", pokemonNo))
+                .AsEnumerable()
+                .FirstOrDefault();
+            return result;
+        }
+
         public async Task AddPokemon(PokemonDto pokemonDto)
         {
+            var existingPokemon = await _context.Pokemons.FirstOrDefaultAsync(p => p.PokemonNo == pokemonDto.PokemonNo);
+            if (existingPokemon != null)
+            {
+                throw new ValidationException("Pokemon number already exists.");
+            }
+
             var pokemonNoParam = new SqlParameter("@PokemonNo", pokemonDto.PokemonNo);
             var nameParam = new SqlParameter("@Name", pokemonDto.Name);
             var typeParam = new SqlParameter("@Type", pokemonDto.Type);
